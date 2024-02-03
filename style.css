@@ -1,26 +1,4 @@
-/* This is a simple CSS file */
-/* You can add your CSS styles here */
-
-/* Example: Style the header */
-header {
-    background-color: #333;
-    color: navy;
-    text-align: center;
-    padding: 10px;
-}
-
-/* Example: Style the navigation links */
-nav {
-    background-color: #444;
-    padding: 5px;
-}
-
-nav a {
-    color: navy;
-    text-decoration: none;
-    margin-right: 10px;
-}
-
-nav a:hover {
-    text-decoration: underline;
+/* Set the background color to light grey */
+body {
+    background-color: #f0f0f0; /* You can adjust the shade of grey by changing the hex value */
 }
