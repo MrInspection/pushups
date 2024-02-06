@@ -1,4 +1,8 @@
-BEFORE RUNNING THE PROJECT ON ANYTHING:
+# Push-up Tracker
+
+This is the beginning of a push up tracker.
+
+**BEFORE RUNNING THE PROJECT ON ANYTHING**:
 
 INSTALL THE FOLLOWING:
 
