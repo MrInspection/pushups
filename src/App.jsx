@@ -1,9 +1,11 @@
 import { useState } from "react";
-
+import moment from "moment";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(localStorage.getItem("Pushups") || 0);
+  const [count, setCount] = useState(
+    Number.parseInt(localStorage.getItem("Pushups")) || 0
+  );
   const [history, setHistory] = useState(
     JSON.parse(localStorage.getItem("History")) || [
       {
@@ -46,8 +48,15 @@ function App() {
     <>
       <h1>{count} push ups today!</h1>
       <div className="card">
-        <input type="number" value={count} onChange={handleInputChange} />
-        <button onClick={incrementPushups}>Add push-up</button>
+        <input
+          className="pushupInput"
+          type="number"
+          value={count}
+          onChange={handleInputChange}
+        />
+        <button className="increasePushupButton" onClick={incrementPushups}>
+          Add push-up
+        </button>
       </div>
       <div>
         <button onClick={addToHistory}>Save</button>
