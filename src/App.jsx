@@ -1,5 +1,4 @@
 import { useState } from "react";
-import moment from "moment";
 
 import "./App.css";
 
@@ -53,7 +52,7 @@ function App() {
       <div>
         <button onClick={addToHistory}>Save</button>
       </div>
-      <div>
+      <div className="history">
         <h2>History</h2>
         <table>
           <thead>
