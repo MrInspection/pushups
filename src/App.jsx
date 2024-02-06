@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import moment from "moment";
 import "./App.css";
 import Calendar from "react-github-contribution-calendar";
@@ -6,6 +6,18 @@ import Calendar from "react-github-contribution-calendar";
 var panelColors = ["#EEEEEE", "#F78A23", "#F87D09", "#AC5808", "#7B3F06"];
 
 function App() {
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0]; // get today's date in YYYY-MM-DD format
+
+    const history = JSON.parse(localStorage.getItem("History")) || []; // get the history from local storage
+    const lastEntry = history[0]; // get the last entry
+
+    if (lastEntry && lastEntry.date !== today) {
+      // if the date has changed, reset the PushUps item to 0
+      localStorage.setItem("PushUps", JSON.stringify(0));
+    }
+  }, []);
+
   const [count, setCount] = useState(
     Number.parseInt(localStorage.getItem("Pushups")) || 0
   );
