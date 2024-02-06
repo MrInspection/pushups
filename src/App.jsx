@@ -52,6 +52,7 @@ function App() {
           className="pushupInput"
           type="number"
           value={count}
+          min="0"
           onChange={handleInputChange}
         />
         <button className="increasePushupButton" onClick={incrementPushups}>
