@@ -40,8 +40,18 @@ function App() {
     localStorage.setItem("History", JSON.stringify(newHistory));
   };
 
-  const formatDate = (date) => {
-    return date;
+  const formatDate = (inputDate) => {
+    const today = moment().startOf("day");
+    const inputDateStartOfDay = moment(inputDate, "M-D-YYYY").startOf("day");
+    const daysAgo = today.diff(inputDateStartOfDay, "days");
+
+    if (daysAgo === 0) {
+      return "Today";
+    } else if (daysAgo === 1) {
+      return "Yesterday";
+    } else {
+      return `${daysAgo} days ago`;
+    }
   };
 
   return (
