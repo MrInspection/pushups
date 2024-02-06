@@ -1,12 +1,18 @@
 import { useState } from "react";
+import moment from "moment";
 
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [history, setHistory] = useState([
-    { count, date: new Date().toLocaleDateString() },
-  ]);
+  const [count, setCount] = useState(localStorage.getItem("Pushups") || 0);
+  const [history, setHistory] = useState(
+    JSON.parse(localStorage.getItem("History")) || [
+      {
+        count,
+        date: new Date().toLocaleDateString(),
+      },
+    ]
+  );
 
   const incrementPushups = () => {
     const newCount = count + 1;
@@ -19,13 +25,22 @@ function App() {
 
   const addToHistory = () => {
     const newEntry = { count, date: new Date().toLocaleDateString() };
-    const lastLog = history[history.length - 1];
+    const lastLog = history[0];
     const today = new Date().toLocaleDateString();
+    let newHistory = [];
+
     if (today === lastLog.date) {
-      setHistory([...history.slice(0, history.length - 1), newEntry]);
+      newHistory = [newEntry, ...history.slice(1, history.length)];
     } else {
-      setHistory([...history, newEntry]);
+      newHistory = [newEntry, ...history];
     }
+    setHistory(newHistory);
+    localStorage.setItem("Pushups", count);
+    localStorage.setItem("History", JSON.stringify(newHistory));
+  };
+
+  const formatDate = (date) => {
+    return date;
   };
 
   return (
@@ -48,9 +63,9 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {history.map((entry, index) => (
+            {history.slice(0, 10).map((entry, index) => (
               <tr key={index}>
-                <td>{entry.date}</td>
+                <td>{formatDate(entry.date)}</td>
                 <td>{entry.count}</td>
               </tr>
             ))}
