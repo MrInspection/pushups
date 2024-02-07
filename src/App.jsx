@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import moment from "moment";
 import "./App.css";
-import Calendar from "react-github-contribution-calendar";
-
-var panelColors = ["#EEEEEE", "#F78A23", "#F87D09", "#AC5808", "#7B3F06"];
+import Calendar from "./components/Calendar";
 
 function App() {
   useEffect(() => {
@@ -69,16 +67,7 @@ function App() {
     }
   };
 
-  const values = history.reduce((prev, now) => {
-    return {
-      ...prev,
-      [moment(now.date, "MM:DD:YYYY").format("YYYY-MM-DD")]: Math.ceil(
-        now.count / 25
-      ),
-    };
-  }, {});
-  console.log(values);
-  const until = new Date().toLocaleDateString();
+  const today = new Date().toLocaleDateString();
 
   return (
     <>
@@ -100,7 +89,7 @@ function App() {
       </div>
       <div className="history">
         <h2>History</h2>
-        <Calendar values={values} until={until} panelColors={panelColors} />
+        <Calendar history={history} today={today} />
         <table>
           <thead>
             <tr>
