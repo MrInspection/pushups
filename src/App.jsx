@@ -14,7 +14,7 @@ function App() {
 
     if (lastEntry && lastEntry.date !== today) {
       // if the date has changed, reset the PushUps item to 0
-      localStorage.setItem("PushUps", JSON.stringify(0));
+      localStorage.setItem("Pushups", JSON.stringify(0));
     }
   }, []);
 
@@ -72,7 +72,9 @@ function App() {
   const values = history.reduce((prev, now) => {
     return {
       ...prev,
-      [moment(now.date, "MM:DD:YYYY").format("YYYY-MM-DD")]: now.count,
+      [moment(now.date, "MM:DD:YYYY").format("YYYY-MM-DD")]: Math.floor(
+        now.count / 25
+      ),
     };
   }, {});
   console.log(values);
