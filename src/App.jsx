@@ -72,7 +72,7 @@ function App() {
   const values = history.reduce((prev, now) => {
     return {
       ...prev,
-      [moment(now.date, "MM:DD:YYYY").format("YYYY-MM-DD")]: Math.floor(
+      [moment(now.date, "MM:DD:YYYY").format("YYYY-MM-DD")]: Math.ceil(
         now.count / 25
       ),
     };
