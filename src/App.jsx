@@ -7,7 +7,7 @@ var panelColors = ["#EEEEEE", "#F78A23", "#F87D09", "#AC5808", "#7B3F06"];
 
 function App() {
   useEffect(() => {
-    const today = new Date().toISOString().split("T")[0]; // get today's date in YYYY-MM-DD format
+    const today = new Date().toLocaleDateString();
 
     const history = JSON.parse(localStorage.getItem("History")) || []; // get the history from local storage
     const lastEntry = history[0]; // get the last entry
