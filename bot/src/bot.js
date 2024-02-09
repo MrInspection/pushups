@@ -1,6 +1,7 @@
 require("dotenv").config();
 
-const { Client, IntentsBitField } = require("discord.js");
+const { Client, IntentsBitField, EmbedBuilder } = require("discord.js");
+const { pushups, addPushUp } = require("./Pushups");
 
 const client = new Client({
   intents: [
@@ -20,9 +21,50 @@ client.on("interactionCreate", (interaction) => {
 
   switch (interaction.commandName) {
     case "access":
-      interaction.reply(
-        "You can access the Push-up Tracker here using the commands, `/pushups` or if you prefer you can also use the website https://paftrsickl.github.io/pushups/"
-      );
+      const embed = new EmbedBuilder()
+        .setTitle("Push-Up Tracker")
+        .setDescription("How to use Push-Up Tracker")
+        .setColor(0xff0000)
+        .setFields(
+          {
+            name: "Commands",
+            value: "/pushups {number}",
+            inline: false,
+          },
+          {
+            name: "Website",
+            value: "https://paftrsickl.github.io/pushups/",
+            inline: false,
+          }
+        );
+      interaction.reply({ embeds: [embed] });
+    case "pushups":
+      addPushUp(interaction);
+      const embed2 = new EmbedBuilder()
+        .setTitle("Push-Up Tracker")
+        .setDescription("Keeping track of your Pushups")
+        .setColor(0xff0000)
+        .setFields(
+          {
+            name: `Today:`,
+            value: `Your Push-Ups Today: ${
+              pushups[interaction.member.id].pushups
+            }`,
+            inline: false,
+          },
+          ...pushups[interaction.member.id].history.slice(0, 7).reduce(
+            (acc, now) => [
+              ...acc,
+              {
+                name: `Date ${now.date}`,
+                value: `${now.count} Push-ups`,
+              },
+            ],
+            []
+          )
+        );
+
+      interaction.reply({ embeds: [embed2] });
     default:
       return;
   }
