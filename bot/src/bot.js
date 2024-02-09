@@ -37,7 +37,8 @@ client.on("interactionCreate", (interaction) => {
             inline: false,
           }
         );
-      interaction.reply({ embeds: [embed] });
+      interaction.reply({ embeds: [embed], ephemeral: true });
+      return;
     case "pushups":
       addPushUp(interaction);
       const embed2 = new EmbedBuilder()
