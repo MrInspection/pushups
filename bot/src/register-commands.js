@@ -1,11 +1,29 @@
 require("dotenv").config();
 
-const { REST, Routes } = require("discord.js");
+const {
+  REST,
+  Routes,
+  Application,
+  ApplicationCommandType,
+  ApplicationCommandOptionType,
+} = require("discord.js");
 
 const commands = [
   {
     name: "access",
     description: "Helps you how to use Push-up Tracker",
+  },
+  {
+    name: "pushups",
+    description: "Keep track of your Push-ups",
+    options: [
+      {
+        name: "pushups",
+        description: "Number of Push-ups",
+        type: ApplicationCommandOptionType.Number,
+        required: true,
+      },
+    ],
   },
 ];
 
