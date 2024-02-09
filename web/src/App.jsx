@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import moment from "moment";
 import "./App.css";
 import Calendar from "./components/Calendar";
+import Stats from "./components/Stats";
 
 function App() {
   useEffect(() => {
@@ -71,6 +72,9 @@ function App() {
 
   return (
     <>
+      <header>
+        <Stats history={history} />
+      </header>
       <h1>{count} push ups today!</h1>
       <div className="card">
         <input
