@@ -4,13 +4,40 @@ This is the beginning of a push up tracker.
 
 **BEFORE RUNNING THE PROJECT ON ANYTHING**:
 
-INSTALL THE FOLLOWING:
+The following files or directories is the production version of **web/** directory.
 
-- PYTHON 3.11 (you should have python & pip)
-- discord.py `pip install discord.py`
+```
+./
+--- assets/
+--- index.html
+--- vite.svg
+```
 
-FOR THE CLIENT SIDE
+The development files of the Web Client of Push-up tracker it's located in **web/**
 
-- The latest version of Node.js
-- `npm install`
-- `npm run dev`
+## Requirements
+
+- The Latest version of Node.js
+
+## Development
+
+### Discord Bot
+
+```sh
+cd bot
+npm install # installs all dependencies
+echo -e """
+DISCORD_TOKEN=""
+GUILD_ID=""
+CLIENT_ID=""
+""" > .env
+npm run dev # It uses Nodemon to watch files for changes
+```
+
+### Web Application
+
+```bash
+cd web
+npm install
+npm run dev # uses vite for bundler and live server
+```
