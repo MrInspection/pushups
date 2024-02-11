@@ -1,7 +1,9 @@
 require("dotenv").config();
 
 const { Client, IntentsBitField, EmbedBuilder } = require("discord.js");
-const { pushups, addPushUp } = require("./Pushups");
+const mongoose = require("mongoose");
+const { Pushup } = require("./Pushups");
+const moment = require("moment");
 
 const client = new Client({
   intents: [
@@ -10,6 +12,12 @@ const client = new Client({
     IntentsBitField.Flags.GuildMessages,
     IntentsBitField.Flags.MessageContent,
   ],
+});
+
+mongoose.connect(process.env.MONGO_URI);
+
+mongoose.connection.on("connected", () => {
+  console.log(`it's connect to the database`);
 });
 
 client.on("ready", (c) => {
@@ -40,32 +48,54 @@ client.on("interactionCreate", (interaction) => {
       interaction.reply({ embeds: [embed], ephemeral: true });
       return;
     case "pushups":
-      addPushUp(interaction);
-      const embed2 = new EmbedBuilder()
-        .setTitle("Push-Up Tracker")
-        .setDescription("Keeping track of your Pushups")
-        .setColor(0xff0000)
-        .setFields(
-          {
-            name: `Today:`,
-            value: `Your Push-Ups Today: ${
-              pushups[interaction.member.id].pushups
-            }`,
-            inline: false,
-          },
-          ...pushups[interaction.member.id].history.slice(0, 7).reduce(
-            (acc, now) => [
-              ...acc,
-              {
-                name: `Date ${now.date}`,
-                value: `${now.count} Push-ups`,
-              },
-            ],
-            []
-          )
-        );
+      const userId = interaction.member.id;
+      const numberOfPushups = interaction.options.get("pushups").value;
 
-      interaction.reply({ embeds: [embed2] });
+      Pushup.findOne({ user_id: `${userId}` })
+        .then((pushup) => {
+          if (pushup) {
+            // If the document exists, use the incrementPushups method
+            return pushup.incrementPushups(numberOfPushups);
+          } else {
+            // If the document doesn't exist, create a new one
+            const newPushup = new Pushup({
+              user_id: `${userId}`,
+              pushups_today: numberOfPushups,
+              today: new Date(),
+            });
+            return newPushup.save();
+          }
+        })
+        .then((updatedPushup) => {
+          const embed2 = new EmbedBuilder()
+            .setTitle("Push-Up Tracker")
+            .setDescription("Keeping track of your Pushups")
+            .setColor(0xff0000)
+            .setFields(
+              {
+                name: `Your Push-ups Today:`,
+                value: `${updatedPushup.pushups_today} push-ups!`,
+                inline: false,
+              },
+              ...updatedPushup.history.slice(0, 7).reduce(
+                (acc, now) => [
+                  ...acc,
+                  {
+                    name: `Date ${moment(now.date).format("MM DD - YYYY")}`,
+                    value: `${now.pushups} Push-ups`,
+                  },
+                ],
+                []
+              )
+            );
+
+          interaction.reply({ embeds: [embed2] });
+          console.log(updatedPushup);
+        })
+        .catch((err) => {
+          // Handle error
+          console.error(err);
+        });
     default:
       return;
   }

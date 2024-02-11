@@ -1,28 +1,59 @@
+const mongoose = require("mongoose");
+const moment = require("moment");
 const pushups = {};
 
-const addPushUp = (interaction) => {
-  pushups[interaction.member.id] = pushups[interaction.member.id] || {
-    pushups: 0,
-    history: [],
-  };
-  const today = new Date().toLocaleDateString();
+const PushupSchema = new mongoose.Schema({
+  user_id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  today: {
+    type: Date,
+    required: true,
+  },
+  pushups_today: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  history: [
+    {
+      date: {
+        type: Date,
+        required: true,
+      },
+      pushups: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+});
 
-  if (
-    pushups[interaction.member.id].history[0] &&
-    pushups[interaction.member.id].history[0].date !== today
-  ) {
-    pushups[interaction.member.id].pushups = 0;
+PushupSchema.methods.incrementPushups = function (pushups) {
+  // Get today's date
+  const today = moment().startOf("day");
+
+  if (moment(this.today).isSame(today, "day")) {
+    // If it is, increment pushups_today
+    this.pushups_today += pushups;
+  } else {
+    // If it's not, reset pushups_today and add a new entry to the history array
+    this.history.push({
+      date: this.today,
+      pushups: this.pushups_today,
+    });
+
+    this.pushups_today = pushups;
+    this.today = new Date();
   }
 
-  pushups[interaction.member.id].pushups +=
-    interaction.options.get("pushups").value;
-  pushups[interaction.member.id].history = [
-    {
-      count: interaction.options.get("pushups").value,
-      date: new Date().toLocaleDateString(),
-    },
-    ...pushups[interaction.member.id].history,
-  ];
+  // Save the document
+  return this.save();
 };
 
-module.exports = { pushups, addPushUp };
+// Create the model from the schema
+const Pushup = mongoose.model("Pushup", PushupSchema);
+
+module.exports = { Pushup };
