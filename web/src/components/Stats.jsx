@@ -20,7 +20,12 @@ function isInCurrentWeek(date) {
   const startOfWeek = moment().startOf("week");
   const endOfWeek = moment().endOf("week");
 
-  return moment(date, "M-D-YYYY").isBetween(startOfWeek, endOfWeek);
+  return moment(date, "M-D-YYYY").isBetween(
+    startOfWeek,
+    endOfWeek,
+    undefined,
+    "[]"
+  );
 }
 
 function Stats({ history }) {
