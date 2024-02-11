@@ -4,9 +4,11 @@ import "./App.css";
 import Calendar from "./components/Calendar";
 import Stats from "./components/Stats";
 
+moment.locale("en");
+
 function App() {
   useEffect(() => {
-    const today = new Date().toLocaleDateString();
+    const today = new Date().toLocaleDateString("en-US");
 
     const history = JSON.parse(localStorage.getItem("History")) || []; // get the history from local storage
     const lastEntry = history[0]; // get the last entry
@@ -24,7 +26,7 @@ function App() {
     JSON.parse(localStorage.getItem("History")) || [
       {
         count,
-        date: new Date().toLocaleDateString(),
+        date: new Date().toLocaleDateString("en-US"),
       },
     ]
   );
@@ -39,9 +41,9 @@ function App() {
   };
 
   const addToHistory = () => {
-    const newEntry = { count, date: new Date().toLocaleDateString() };
+    const newEntry = { count, date: new Date().toLocaleDateString("en-US") };
     const lastLog = history[0];
-    const today = new Date().toLocaleDateString();
+    const today = new Date().toLocaleDateString("en-US");
     let newHistory = [];
 
     if (today === lastLog.date) {
@@ -68,7 +70,7 @@ function App() {
     }
   };
 
-  const today = new Date().toLocaleDateString();
+  const today = new Date().toLocaleDateString("en-US");
 
   return (
     <>
