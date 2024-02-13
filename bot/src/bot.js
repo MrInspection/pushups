@@ -24,6 +24,21 @@ client.on("ready", (c) => {
   console.log(`${c.user.tag} is online`);
 });
 
+client.on("messageCreate", async (message) => {
+  if (message.content.startsWith("!speakpushup")) {
+    if (message.author.id !== "382258788729880586") return;
+    const text = message.content.slice(12); // Remove '!speak ' from the message
+
+    // Delete the original message
+    if (message.deletable) {
+      await message.delete();
+    }
+
+    // Send the new message
+    message.channel.send(text);
+  }
+});
+
 client.on("interactionCreate", (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
