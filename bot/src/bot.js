@@ -105,7 +105,6 @@ client.on("interactionCreate", (interaction) => {
             );
 
           interaction.reply({ embeds: [embed2] });
-          console.log(updatedPushup);
         })
         .catch((err) => {
           // Handle error
