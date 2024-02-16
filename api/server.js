@@ -92,4 +92,8 @@ app.post("/pushups", authenticatedRoute, async (req, res) => {
   res.json({ error: false, message: "Pushups updated" });
 });
 
+app.get("/", (req, res) => {
+  res.send("Pushup tracker is working");
+});
+
 app.listen(port, () => console.log(`Server listening on port ${port}`));
