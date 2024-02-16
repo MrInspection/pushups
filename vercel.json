@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/((?!.*\\.\\w+$).*)",
-      "dest": "api/server.js"
+      "dest": "/api/server.js"
     }
   ]
 }
