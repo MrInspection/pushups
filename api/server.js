@@ -2,8 +2,20 @@ require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+const { Pushup } = require("./Pushups");
+const bodyParser = require("body-parser");
 
 const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+mongoose.connect(process.env.MONGO_URI);
+
+mongoose.connection.on("connected", () => {
+  console.log("Connected to database");
+});
 
 const port = process.env.PORT;
 
@@ -11,7 +23,7 @@ function authenticatedRoute(req, res, next) {
   const token = req.header("Authorization").replace("Bearer ", "");
 
   try {
-    const data = jwt.verify(token, process.env.JWT_TOKEN);
+    const data = jwt.verify(token, process.env.JWT_SECRET);
     req.data = data;
     next();
   } catch (err) {
@@ -60,6 +72,24 @@ app.get("/getDiscordData", async (req, res) => {
   );
 
   res.redirect(`${process.env.DASHBOARD_URL}?token=${token}`);
+});
+
+app.get("/pushups", authenticatedRoute, async (req, res) => {
+  console.log(req.data);
+  const pushup = await Pushup.findOne({ user_id: req.data.id });
+  await pushup.updateToday();
+  res.json({
+    pushups: pushup.pushups_today,
+  });
+});
+
+app.post("/pushups", authenticatedRoute, async (req, res) => {
+  const { pushups } = req.body;
+
+  const push = await Pushup.findOne({ user_id: req.data.id });
+
+  await push.insertPushup(pushups);
+  res.json({ error: false, message: "Pushups updated" });
 });
 
 app.listen(port, () => console.log(`Server listening on port ${port}`));
