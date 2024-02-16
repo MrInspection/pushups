@@ -79,3 +79,27 @@ th {
     margin-top: 15px;
   }
 }
+
+.header-user {
+  text-align: left;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+#login {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 22px;
+}
+
+.header-user {
+  display: flex;
+  justify-content: space-between;
+}

@@ -3,8 +3,24 @@ import moment from "moment";
 import "./App.css";
 import Calendar from "./components/Calendar";
 import Stats from "./components/Stats";
+import Login from "./components/Login";
 
 moment.locale("en");
+
+function parseJwt(token) {
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+}
 
 function App() {
   useEffect(() => {
@@ -17,7 +33,34 @@ function App() {
       // if the date has changed, reset the PushUps item to 0
       localStorage.setItem("Pushups", JSON.stringify(0));
     }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const token =
+      urlParams.get("token") || localStorage.getItem("PushUpAPIToken");
+    console.log("this is the token", token);
+
+    if (token) {
+      const decodedToken = parseJwt(token);
+      localStorage.setItem("PushUpAPIToken", token);
+      localStorage.setItem(
+        "PushUpAPIDecodedToken",
+        JSON.stringify(decodedToken)
+      );
+    }
+
+    if (localStorage.getItem("PushUpAPIToken")) {
+      setSettings((s) => ({
+        ...s,
+        logged: true,
+        user: JSON.parse(localStorage.getItem("PushUpAPIDecodedToken")),
+      }));
+    }
   }, []);
+
+  const [settings, setSettings] = useState({
+    logged: false,
+    user: null,
+  });
 
   const [count, setCount] = useState(
     Number.parseInt(localStorage.getItem("Pushups")) || 0
@@ -72,8 +115,30 @@ function App() {
 
   const today = new Date().toLocaleDateString("en-US");
 
+  const logoutAccount = () => {
+    localStorage.removeItem("PushUpAPIToken");
+    localStorage.removeItem("PushUpAPIDecodedToken");
+    setSettings((s) => ({
+      ...s,
+      logged: false,
+      user: null,
+    }));
+  };
+
   return (
     <>
+      <div className="header-user">
+        {settings.user ? (
+          <>
+            <h3>{settings.user.username}</h3>
+            <button onClick={logoutAccount}>Logout</button>
+          </>
+        ) : (
+          <>
+            <Login logged={settings.user === null} />
+          </>
+        )}
+      </div>
       <header>
         <Stats history={history} />
       </header>
