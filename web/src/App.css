@@ -94,7 +94,7 @@ th {
 
 #login {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
   font-size: 22px;
 }
