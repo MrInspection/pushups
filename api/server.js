@@ -32,46 +32,56 @@ function authenticatedRoute(req, res, next) {
 }
 
 app.get("/getDiscordData", async (req, res) => {
-  const code = req.query.code;
-  const data = {
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
-    grant_type: "authorization_code",
-    code: code,
-    scope: "identity",
-    redirect_uri: process.env.REDIRECT_URI,
-  };
+  const error = req.query.error;
+  if (error) {
+    res.redirect(`${process.env.DASHBOARD_URL}`);
+    return;
+  }
+  try {
+    const code = req.query.code;
+    const data = {
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+      grant_type: "authorization_code",
+      code: code,
+      scope: "identity",
+      redirect_uri: process.env.REDIRECT_URI,
+    };
 
-  // Exchange the authorization code for an access token
-  let response = await axios.post(
-    "https://discord.com/api/oauth2/token",
-    new URLSearchParams(data),
-    {
+    // Exchange the authorization code for an access token
+    let response = await axios.post(
+      "https://discord.com/api/oauth2/token",
+      new URLSearchParams(data),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    const accessToken = response.data.access_token;
+
+    // Use the access token to fetch user data
+    response = await axios.get("https://discord.com/api/v9/users/@me", {
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        authorization: `Bearer ${accessToken}`,
       },
-    }
-  );
+    });
 
-  const accessToken = response.data.access_token;
+    const userData = response.data;
 
-  // Use the access token to fetch user data
-  response = await axios.get("https://discord.com/api/v9/users/@me", {
-    headers: {
-      authorization: `Bearer ${accessToken}`,
-    },
-  });
+    const { id, username, avatar, discriminator, locale } = userData;
 
-  const userData = response.data;
+    const token = jwt.sign(
+      { id, username, avatar, discriminator, locale },
+      process.env.JWT_SECRET
+    );
 
-  const { id, username, avatar, discriminator, locale } = userData;
-
-  const token = jwt.sign(
-    { id, username, avatar, discriminator, locale },
-    process.env.JWT_SECRET
-  );
-
-  res.redirect(`${process.env.DASHBOARD_URL}?token=${token}`);
+    res.redirect(`${process.env.DASHBOARD_URL}?token=${token}`);
+  } catch (error) {
+    res.redirect(`${process.env.DASHBOARD_URL}`);
+    return;
+  }
 });
 
 app.get("/pushups", authenticatedRoute, async (req, res) => {
