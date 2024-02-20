@@ -1,4 +1,6 @@
 require("dotenv").config();
+const path = require("path");
+const fs = require("fs");
 
 const {
   REST,
@@ -8,24 +10,21 @@ const {
   ApplicationCommandOptionType,
 } = require("discord.js");
 
-const commands = [
-  {
-    name: "access",
-    description: "Helps you how to use Push-up Tracker",
-  },
-  {
-    name: "pushups",
-    description: "Keep track of your Push-ups",
-    options: [
-      {
-        name: "pushups",
-        description: "Number of Push-ups",
-        type: ApplicationCommandOptionType.Number,
-        required: true,
-      },
-    ],
-  },
-];
+// Create an array to store your command data
+const commands = [];
+
+// Read all the files in the slashCommands folder
+const commandFiles = fs
+  .readdirSync(path.join(__dirname, "commands/"))
+  .filter((file) => file.endsWith(".js"));
+
+// Loop through the files and add the command data to the array
+for (const file of commandFiles) {
+  // Require the file and get the exported object
+  const command = require(path.join(__dirname, "commands/", file));
+  // Push the command data to the array
+  commands.push(command.data.toJSON());
+}
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
